@@ -1,5 +1,6 @@
 package lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -23,6 +24,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
     public PersistentTransactionDAO(ExpenseManagerDbHelper dbHelper) {
         this.dbHelper = dbHelper;
         transactions = new LinkedList<>();
+        loadTransactions();
     }
 
     public void loadTransactions(){
@@ -39,8 +41,9 @@ public class PersistentTransactionDAO implements TransactionDAO {
         Cursor cursor = db.query(ExpensesManagerContract.Transaction.TABLE_NAME, projection, null, null, null, null, null);
 
         while(cursor.moveToNext()){
+            Date date = new Date();
             try {
-                Date date = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(ExpensesManagerContract.Transaction.TABLE_COLUMN_DATE)));
+                date = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(ExpensesManagerContract.Transaction.TABLE_COLUMN_DATE)));
             }catch (ParseException e){
                 e.printStackTrace();
             }
@@ -48,22 +51,37 @@ public class PersistentTransactionDAO implements TransactionDAO {
             String type = cursor.getString((cursor.getColumnIndexOrThrow(ExpensesManagerContract.Transaction.TABLE_COLUMN_ACCOUNT_EXPENSE_TYPE)));
 
             ExpenseType expenseType;
-            if (type == "Expense"){
+            if (type == "EXPENSE"){
                 expenseType = ExpenseType.EXPENSE;
             }
-            else if (type == "Income"){
+            else {
                 expenseType = ExpenseType.INCOME;
             }
 
+            Double amount = cursor.getDouble(cursor.getColumnIndexOrThrow(ExpensesManagerContract.Transaction.TABLE_COLUMN_AMOUNT));
 
-
+            Transaction transaction= new Transaction(date, accountNo, expenseType, amount);
+            transactions.add((transaction));
         }
+        cursor.close();
+    }
 
+    public void insertTransaction(Transaction transaction){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ExpensesManagerContract.Transaction.TABLE_COLUMN_DATE, String.valueOf(transaction.getDate()));
+        values.put(ExpensesManagerContract.Transaction.TABLE_COLUMN_ACCOUNT_NO, transaction.getAccountNo());
+        values.put(ExpensesManagerContract.Transaction.TABLE_COLUMN_ACCOUNT_EXPENSE_TYPE, transaction.getExpenseType().name());
+        values.put(ExpensesManagerContract.Transaction.TABLE_COLUMN_AMOUNT, transaction.getAmount());
+
+        db.insert(ExpensesManagerContract.Transaction.TABLE_NAME, null, values);
     }
 
     @Override
     public void logTransaction(Date date, String accountNo, ExpenseType expenseType, double amount) {
         Transaction transaction = new Transaction(date, accountNo, expenseType, amount);
+        insertTransaction(transaction);
         transactions.add(transaction);
     }
 

@@ -17,14 +17,14 @@ public class ExpenseManagerDbHelper extends SQLiteOpenHelper {
                     Account.TABLE_COLUMN_ACCOUNT_NAME + " string PRIMARY KEY, " +
                     Account.TABLE_COLUMN_BANK_NAME + " string not null, " +
                     Account.TABLE_COLUMN_ACCOUNT_HOLDER_NAME + " string not null, " +
-                    Account.TABLE_COLUMN_BALANCE + " decimal(8, 2) )";
+                    Account.TABLE_COLUMN_BALANCE + " double )";
 
     private static final String SQL_CREATE_TRANSACTIONS =
             "CREATE TABLE " + Transaction.TABLE_NAME + "(" +
-                    Transaction.TABLE_COLUMN_DATE + " date not null, " +
+                    Transaction.TABLE_COLUMN_DATE + " string not null, " +
                     Transaction.TABLE_COLUMN_ACCOUNT_NO + " string not null, " +
                     Transaction.TABLE_COLUMN_ACCOUNT_EXPENSE_TYPE + " string not null, " +
-                    Transaction.TABLE_COLUMN_AMOUNT + " decimal(8, 2), " +
+                    Transaction.TABLE_COLUMN_AMOUNT + " double, " +
                     "FOREIGN KEY (accountNo) REFERENCES "+ Account.TABLE_NAME + "("+ Account.TABLE_COLUMN_ACCOUNT_NAME+ "))";
 
     private static final String SQL_DELETE_ACCOUNTS =
