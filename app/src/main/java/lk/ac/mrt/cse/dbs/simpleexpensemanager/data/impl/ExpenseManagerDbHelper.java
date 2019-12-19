@@ -11,7 +11,7 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl.ExpensesManagerContract.
 public class ExpenseManagerDbHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "ExpenseManager.db";
+    public static final String DATABASE_NAME = "170604V.db";
     private static final String SQL_CREATE_ACCOUNTS =
             "CREATE TABLE "+ Account.TABLE_NAME +"(" +
                     Account.TABLE_COLUMN_ACCOUNT_NAME + " string PRIMARY KEY, " +

@@ -55,7 +55,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
                 expenseType = ExpenseType.INCOME;
             }
 
-            
+
 
         }
 
